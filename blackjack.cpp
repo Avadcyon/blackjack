@@ -4,6 +4,8 @@
 #include <ctime>
 #include <cstdlib>
 #include <sstream>
+#include <thread>
+#include <chrono>
 
 using namespace std;
 
@@ -237,6 +239,43 @@ public:
     }
 };
 
+void clearScreen() {
+    for (int i = 0; i < 100; ++i) {
+        cout << endl;
+    }
+}
+
+void animationProcedure(Dealer& dealer, Player& player, Deck& deck) {
+    using namespace std::chrono_literals;
+
+    clearScreen();
+    dealer.drawInitialCards(deck);
+    dealer.printHand(false);
+    this_thread::sleep_for(1s); // Wait for 1 second
+
+    clearScreen();
+    dealer.printHand(false);
+    dealer.hands[0][1] = deck.drawCard(false);
+    dealer.printHand(false);
+    this_thread::sleep_for(1s); // Wait for 1 second
+
+    clearScreen();
+    dealer.printHand(false);
+    player.drawCard(deck);
+    player.printHand();
+    this_thread::sleep_for(1s); // Wait for 1 second
+
+    clearScreen();
+    dealer.printHand(false);
+    player.drawCard(deck);
+    player.printHand();
+    this_thread::sleep_for(1s); // Wait for 1 second
+
+    clearScreen();
+    dealer.printHand(false);
+    player.printHand();
+}
+
 void splitPair(Player& player, int i, Deck& deck, bool& resplitPossible) {
     if (player.canSplit(i) && player.hands.size() < 4) { // Ensure maximum of 4 hands
         char choice;
@@ -267,15 +306,7 @@ void playGame() {
     Player player;
     Dealer dealer;
 
-    dealer.drawInitialCards(deck);
-
-    cout << "Dealer's hand: " << endl;
-    dealer.printHand(false); // Only show the first card
-
-    player.drawCard(deck);
-    player.drawCard(deck);
-    cout << "Your hand: " << endl;
-    player.printHand();
+    animationProcedure(dealer, player, deck);
 
     bool resplitPossible = true;
 
